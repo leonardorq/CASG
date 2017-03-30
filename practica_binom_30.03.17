@@ -1,0 +1,111 @@
+#     DISTRIBUCIÓN    BINOMIAL
+#Crear lista o secuencia
+#puede ser creada con seq o una simple lista
+seq(0,15,0.5)
+polizas<-(0:15)
+n<-15
+exito<-0.25
+prob_5<-dbinom(5,n,prob=exito)
+
+#CÁLCULO DE PROBABILIDADES
+prob<-dbinom(polizas,n,prob=0.25)
+#dbinom <- P(X=x)
+#pbinom <- P(X<=x)
+#qbinom <- percentiles
+#la función cbind permite agrupar objetos
+informef<-cbind(polizas,prob)
+informef
+#Gráfico de las probabilidades
+plot(polizas,prob,type="b",xlab="Pólizas",ylab="Probabiidad",main="Pólizas Siniestradas")
+#otra forma de graficar
+plot(polizas,prob,type="l",xlab="Pólizas",ylab="Probabiidad",main="Pólizas Siniestradas")
+#El gráfico tipo l es una línea continua y el tipo b marca puntos en la funación
+points(polizas,prob)
+#Points es para agregar puntos en el gráfico
+
+#CÁLCULO DE PROBABILIDADES ACUMULADAS
+F<-cumsum(prob)
+F
+#otra forma
+Fx3<-pbinom(3,n,prob=0.25)
+Fx3
+Fx<-pbinom(polizas,n,prob=0.25)
+#Gráficos de la distribución acumulada
+informeF<-cbind(polizas,Fx)
+informeF
+plot(polizas,Fx,type="S")
+#El tipo S es para graficar funciones escalonadas
+plot(polizas,Fx,type="b")
+points(polizas, prob, col="Red")
+
+#CÁLCULO DE MEDIA Y VARIANZA
+#E(x)=suma(xi*Pr(xi))
+media1=sum(polizas*prob)
+media1 #3.75
+#Varianza
+segundo<-sum((polizas^2)*prob)
+segundo
+var<-segundo-media1^2
+var #2.81
+#Varianza con parámetros
+var1<-n*0.25*(1-0.25)
+var1
+#Varianza con el momento central
+var2<-sum(((polizas-media1)^2)*prob)
+var2
+
+#PERCENTILES
+#Ejemplo para el cálculo de percentiles
+#Calcule el valor que deja por debajo al 30% de los 
+q30<-qbinom(0.3,n,prob=0.25)
+q30
+#Representa que el 30% de la probabilidad está por debajo de 3 siniestros
+percentiles<-seq(0,1,by=0.05)
+#Para obtener todos los percentiles de la cartera
+lpercent<-qbinom(percentiles,n,prob=0.25)
+informe_p<-cbind(percentiles*100,lpercent)
+informe_p
+plot(informe_p,type="b",xlab="Percentiles",ylab="Siniestros")
+#Analisis de los percentiles
+#Es una cartera muy mala porque cuando hay 4 siniestros ya llevo el 50% de la probabilidad
+
+#SESGO
+#cálculo del 3er momento
+sesgo<-(1-2*0.25)/(n*0.25*(1-0.25))^0.5
+sesgo #0.2981
+
+#Prob de tener 9 siniestros P[X=9]
+nueve<-dbinom(9,n,prob=0.25)
+nueve #0.0033
+#Prob de tener 5 o menos siniestros P[X<=5]
+cinco<-pbinom(5,n,prob=0.25)
+cinco #0.85
+#Prob de tener más de 7 siniestros
+siete=1-pbinom(7,n,prob=0.25)
+siete #0.01
+#Prob de tener 8 o más siniestros P[X>=8]= 1-P[X<=8]-P[X=8]=1-P[X<=7]
+ocho<-1-pbinom(7,n,prob=0.25)
+ocho #0.01
+#Prob de tener al menos 4 y a lo mucho 11 siniestros P[4<=x<=11]=P[X=4]+P[X=5]+...+P[X=11]
+#   =
+entre4y11<-pbinom(11,n,prob=0.25)-pbinom(3,n,prob=0.25)
+entre4y11 #0.53
+#Prob de tener entre 1 y 8 siniestros P[1<X<8]=P[X<=7]-P[X<=1]
+entre1y8<-pbinom(7,n,prob=0.25)-pbinom(1,n,prob=0.25)
+entre1y8 #0.90
+
+#EJERCICIO (Tarea)
+#Se tiene una muestra de 80 pólizas deñ ramo de gastos médicos. La probabilidad de que una de ellas
+#  tenga siniestros es de 0.2%. Estudie la v.a. suponiendo una distribución binomial, lo anterior
+#  debido a que se seleccionará si la póliza tiene o no siniestro
+polizas<-seq(0:80)
+n<-80
+p<-0.2
+#Simular valores con distribución binomial entre 0 y 80
+simulados<-rbinom(10000,n,prob=p)
+simulados
+media_sim<-mean(simulados)
+media_sim #15.98
+varianza_sim<-var(simulados)
+varianza_sim #12.94
+hist(simulados)
